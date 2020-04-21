@@ -6,7 +6,7 @@ import sqlite3
 from bs4 import BeautifulSoup
 import random
 
-def get_player_contract():
+def get_player_list():
     count = 0
     base_url = "https://www.basketball-reference.com/contracts/players.html"
     r = requests.get(base_url)
@@ -21,7 +21,7 @@ def get_player_contract():
                 player_list.append(a.text)
             count += 1
 
-    return player_list
+    return player_list[:100]
 
 
-get_player_contract()
+print(get_player_list())
