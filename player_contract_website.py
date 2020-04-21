@@ -27,18 +27,23 @@ def get_player_list():
 
 def player_trends(list_of_players):
     pytrends = TrendReq(hl="en-US", tz=360)
-    #tup_list = []
     mean_list = []
-    kw_list = get_player_list()[:5]
-    # ^ only 5 names at a time, will add 5 at a time to sql
-    pytrends.build_payload(kw_list, cat=1077, timeframe='today 5-y', geo='', gprop='')
-    a = pytrends.interest_over_time()
-    for i in kw_list:
-        mean_list.append(a[i].mean())
-    tup_list = zip(kw_list, mean_list)
+    list_player_list = []
+    play_list = get_player_list()
+    for i in range(0,100,5):
+        x=i
+        list_player_list.append(play_list[x:x+5])
+    for i in list_player_list:
+        kw_list = i
+        pytrends.build_payload(kw_list, cat=1077, timeframe='today 5-y', geo='', gprop='')
+        a = pytrends.interest_over_time()
+        for i in kw_list:
+            mean_list.append(a[i].mean())
+    tup_list = zip(play_list, mean_list)
     return list(tup_list)
 
 print(player_trends(get_player_list))
 
 
-#print(get_player_list())
+
+print(get_player_list())
