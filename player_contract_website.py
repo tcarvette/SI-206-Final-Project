@@ -78,5 +78,36 @@ def player_trends(list_of_players):
     tup_list = zip(play_list, mean_list)
     return list(tup_list)
 
-print(player_name_and_contract())
-print(player_trends(get_player_list))
+def player_ppg():
+    player_lst = get_player_list()
+    ppg_lst = []
+
+    for player in player_lst[num:counter]:
+        query = player.replace("č", "c").replace("ć", "c").replace("ū", "u").replace("ö", "o").replace("ņ", "n").replace("ģ", "g").replace(".", "")
+        url = "https://www.balldontlie.io/api/v1/players?search=" + query
+        r = requests.get(url)
+        
+        data_content = r.json()
+        player_id = data_content["data"][-1]["id"]
+        
+        new_url = "https://www.balldontlie.io/api/v1/season_averages?player_ids[]=" + str(player_id)
+        r_r = requests.get(new_url)
+        
+        player_stats = r_r.json()
+        if len(player_stats["data"]) != 0:
+            player_ppg = player_stats["data"][0]["pts"]
+        else:
+            url_2018 = "https://www.balldontlie.io/api/v1/season_averages?season=2018&player_ids[]=" + str(player_id)
+            r_r_r = requests.get(url_2018)
+
+            player_stats = r_r_r.json()
+            player_ppg = player_stats["data"][0]["pts"]
+
+        tup = (player, player_ppg)
+        ppg_lst.append(tup)
+
+    return ppg_lst
+
+#print(player_name_and_contract())
+#print(player_trends(get_player_list))
+print(player_ppg())
