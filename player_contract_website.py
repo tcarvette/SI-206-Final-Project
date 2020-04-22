@@ -78,11 +78,11 @@ def player_trends(list_of_players):
     tup_list = zip(play_list, mean_list)
     return list(tup_list)
 
-def player_ppg():
+def player_ppg(start_num, end_num):
     player_lst = get_player_list()
     ppg_lst = []
 
-    for player in player_lst[num:counter]:
+    for player in player_lst[start_num:end_num]:
         query = player.replace("č", "c").replace("ć", "c").replace("ū", "u").replace("ö", "o").replace("ņ", "n").replace("ģ", "g").replace(".", "")
         url = "https://www.balldontlie.io/api/v1/players?search=" + query
         r = requests.get(url)
@@ -108,6 +108,30 @@ def player_ppg():
 
     return ppg_lst
 
+def fill_salary_database():
+    conn = sqlite3.connect('/Users/tylercarvette/Desktop/salary.db')
+    cur = conn.cursor()
+
+
+    for _ in range(5):
+        cur.execute('DROP TABLE IF EXISTS PlayerSalary')
+        cur.execute('CREATE TABLE IF NOT EXISTS PlayerSalary (player_name TEXT, salary INTEGER)')
+
+        first = 0
+        last = 20
+        for player_combo in player_name_and_contract()[first:last]:
+            player = player_combo[0]
+            money = player_combo[1]
+
+        
+            word = 'INSERT INTO PlayerSalary (player_name, salary) VALUES (?, ?)'
+            cur.execute(word, (player, money))
+        first += 20
+        last += 20
+    
+    conn.commit()
+
 #print(player_name_and_contract())
 #print(player_trends(get_player_list))
-print(player_ppg())
+#print(player_ppg(0, 20))
+fill_salary_database()
