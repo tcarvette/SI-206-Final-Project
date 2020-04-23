@@ -113,21 +113,13 @@ def fill_salary_database():
     cur = conn.cursor()
 
 
-    for _ in range(5):
-        cur.execute('DROP TABLE IF EXISTS PlayerSalary')
-        cur.execute('CREATE TABLE IF NOT EXISTS PlayerSalary (player_name TEXT, salary INTEGER)')
+    cur.execute('DROP TABLE IF EXISTS PlayerSalary')
+    cur.execute('CREATE TABLE IF NOT EXISTS PlayerSalary (player_name TEXT, salary INTEGER)')
 
-        first = 0
-        last = 20
-        for player_combo in player_name_and_contract()[first:last]:
-            player = player_combo[0]
-            money = player_combo[1]
+  
+    word = 'INSERT INTO PlayerSalary (player_name, salary) VALUES (?, ?)'
+    cur.executemany(word, player_name_and_contract())
 
-        
-            word = 'INSERT INTO PlayerSalary (player_name, salary) VALUES (?, ?)'
-            cur.execute(word, (player, money))
-        first += 20
-        last += 20
     
     conn.commit()
 
