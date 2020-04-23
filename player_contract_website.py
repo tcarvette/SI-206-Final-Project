@@ -123,7 +123,37 @@ def fill_salary_database():
     
     conn.commit()
 
+def fill_ppg_database():
+    conn = sqlite3.connect('/Users/tylercarvette/Desktop/ppg.db')
+    cur = conn.cursor()
+
+    cur.execute('DROP TABLE IF EXISTS PlayerPPG')
+    cur.execute('CREATE TABLE IF NOT EXISTS PlayerPPG (player_name TEXT, ppg INTEGER)')
+    x = 0
+    y = 1
+    for i in range(100):
+        word = 'INSERT INTO PlayerPPG (player_name, ppg) VALUES (?, ?)'
+        cur.executemany(word, player_ppg(x, y))
+        x += 1
+        y += 1
+
+        conn.commit()
+
+def fill_google_mentions_database():
+    conn = sqlite3.connect('/Users/tylercarvette/Desktop/google_mentions.db')
+    cur = conn.cursor()
+
+    cur.execute('DROP TABLE IF EXISTS PlayerMentions')
+    cur.execute('CREATE TABLE IF NOT EXISTS PlayerMentions (player_name TEXT, mentions INTEGER)')
+    
+    word = 'INSERT INTO PlayerMentions (player_name, mentions) VALUES (?, ?)'
+    cur.executemany(word, player_trends(get_player_list()))
+        
+    conn.commit()
+
 #print(player_name_and_contract())
 #print(player_trends(get_player_list))
 #print(player_ppg(0, 20))
-fill_salary_database()
+#fill_salary_database()
+#fill_ppg_database()
+#fill_google_mentions_database()
