@@ -6,6 +6,7 @@ import sqlite3
 from bs4 import BeautifulSoup
 import random
 import pytrends
+import time
 from pytrends.request import TrendReq
 
 def get_player_list():
@@ -122,6 +123,7 @@ def fill_salary_database():
 
     
     conn.commit()
+    conn.close()
 
 def fill_ppg_database():
     conn = sqlite3.connect('/Users/tylercarvette/Desktop/ppg.db')
@@ -130,14 +132,17 @@ def fill_ppg_database():
     cur.execute('DROP TABLE IF EXISTS PlayerPPG')
     cur.execute('CREATE TABLE IF NOT EXISTS PlayerPPG (player_name TEXT, ppg INTEGER)')
     x = 0
-    y = 1
-    for i in range(100):
+    y = 20
+    for i in range(5):
+        time.sleep(40)
         word = 'INSERT INTO PlayerPPG (player_name, ppg) VALUES (?, ?)'
         cur.executemany(word, player_ppg(x, y))
-        x += 1
-        y += 1
+        x += 20
+        y += 20
+
 
         conn.commit()
+    conn.close()
 
 def fill_google_mentions_database():
     conn = sqlite3.connect('/Users/tylercarvette/Desktop/google_mentions.db')
@@ -150,6 +155,7 @@ def fill_google_mentions_database():
     cur.executemany(word, player_trends(get_player_list()))
         
     conn.commit()
+    conn.close()
 
 #print(player_name_and_contract())
 #print(player_trends(get_player_list))
