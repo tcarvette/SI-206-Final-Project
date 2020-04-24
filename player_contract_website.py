@@ -1,6 +1,7 @@
 import re
 import json
 import sys
+import os
 import requests
 import sqlite3
 from bs4 import BeautifulSoup
@@ -110,7 +111,8 @@ def player_ppg(start_num, end_num):
     return ppg_lst
 
 def fill_salary_database():
-    conn = sqlite3.connect('/Users/tylercarvette/Desktop/salary.db')
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    conn = sqlite3.connect(dir_path + "/main_database.db")
     cur = conn.cursor()
 
 
@@ -126,7 +128,8 @@ def fill_salary_database():
     conn.close()
 
 def fill_ppg_database():
-    conn = sqlite3.connect('/Users/tylercarvette/Desktop/ppg.db')
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    conn = sqlite3.connect(dir_path + "/main_database.db")
     cur = conn.cursor()
 
     cur.execute('DROP TABLE IF EXISTS PlayerPPG')
@@ -145,7 +148,8 @@ def fill_ppg_database():
     conn.close()
 
 def fill_google_mentions_database():
-    conn = sqlite3.connect('/Users/tylercarvette/Desktop/google_mentions.db')
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    conn = sqlite3.connect(dir_path + "/main_database.db")
     cur = conn.cursor()
 
     cur.execute('DROP TABLE IF EXISTS PlayerMentions')
@@ -157,9 +161,10 @@ def fill_google_mentions_database():
     conn.commit()
     conn.close()
 
+
 #print(player_name_and_contract())
 #print(player_trends(get_player_list))
 #print(player_ppg(0, 20))
-#fill_salary_database()
-#fill_ppg_database()
-#fill_google_mentions_database()
+fill_salary_database()
+fill_ppg_database()
+fill_google_mentions_database()
