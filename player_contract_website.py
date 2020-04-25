@@ -200,5 +200,4 @@ def main():
     fill_salary_database()
     fill_google_mentions_database()
     fill_ppg_database()
-
-write_calculations()
+    write_calculations()
