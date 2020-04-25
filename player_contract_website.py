@@ -169,13 +169,26 @@ def fill_google_mentions_database():
     conn = sqlite3.connect(dir_path + "/main_database.db")
     cur = conn.cursor()
     
+    relevant_data = cur.execute('SELECT * FROM PlayerMentions')
+    player_lst = []
+    for item in relevant_data:
+        player_lst.append(item[0])
+    count = 0
+    data = player_trends(get_player_list())
     word = 'INSERT OR IGNORE INTO PlayerMentions (player_name, mentions) VALUES (?, ?)'
-    cur.executemany(word, player_trends(get_player_list()))
+    for player in data:
+        if count == 20:
+            break
+        if player[0] in player_lst:
+            continue
+        else:
+            cur.execute(word, (player[0], player[1]))
+            count += 1
 
     avg = cur.execute("SELECT AVG(mentions) FROM PlayerMentions")
     avg1 = list(avg)[0][0]
     params = ("Average Mentions", avg1)
-    cur.execute("INSERT INTO PlayerMentions VALUES (?, ?)", params)
+    cur.execute("INSERT OR IGNORE INTO PlayerMentions VALUES (?, ?)", params)
         
     conn.commit()
     conn.close()
@@ -192,7 +205,7 @@ def reset_databases():
     cur.execute('CREATE TABLE IF NOT EXISTS PlayerPPG (player_name TEXT, ppg INTEGER)')
 
     cur.execute('DROP TABLE IF EXISTS PlayerMentions')
-    cur.execute('CREATE TABLE IF NOT EXISTS PlayerMentions (player_name TEXT, mentions INTEGER)')
+    cur.execute('CREATE TABLE IF NOT EXISTS PlayerMentions (player_name TEXT PRIMARY KEY, mentions INTEGER)')
 
     conn.commit()
     conn.close()
@@ -223,3 +236,4 @@ def main():
 
 #reset_databases()
 fill_salary_database()
+fill_google_mentions_database()
