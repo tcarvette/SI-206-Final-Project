@@ -122,7 +122,12 @@ def fill_salary_database():
   
     word = 'INSERT INTO PlayerSalary (player_name, salary) VALUES (?, ?)'
     cur.executemany(word, player_name_and_contract())
-
+    
+    words = "SELECT AVG(salary) FROM PlayerSalary"
+    avg = cur.execute("SELECT AVG(salary) FROM PlayerSalary")
+    avg1 = list(avg)[0][0]
+    params = ("Average", avg1)
+    cur.execute("INSERT INTO PlayerSalary VALUES (?, ?)", params)
     
     conn.commit()
     conn.close()
@@ -142,9 +147,14 @@ def fill_ppg_database():
         cur.executemany(word, player_ppg(x, y))
         x += 20
         y += 20
-
-
         conn.commit()
+    words = "SELECT AVG(ppg) FROM PlayerPPG"
+    avg = cur.execute("SELECT AVG(ppg) FROM PlayerPPG")
+    avg1 = list(avg)[0][0]
+    params = ("Average", avg1)
+    cur.execute("INSERT INTO PlayerPPG VALUES (?, ?)", params)
+
+    conn.commit()
     conn.close()
 
 def fill_google_mentions_database():
@@ -171,7 +181,7 @@ def fill_google_mentions_database():
 #print(player_trends(get_player_list))
 #print(player_ppg(0, 20))
 
-
+fill_salary_database()
 
 
 def main():
