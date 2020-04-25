@@ -8,7 +8,6 @@ from bs4 import BeautifulSoup
 import random
 import csv
 import pytrends
-import time
 from pytrends.request import TrendReq
 
 def get_player_list():
@@ -149,12 +148,14 @@ def fill_ppg_database():
 
     relevant_data = cur.execute('SELECT * FROM PlayerPPG')
     player_lst = []
+    subcount = 0
     for item in relevant_data:
+        subcount += 1
         player_lst.append(item[0])
 
     count = 0
-    divisor = len(relevant_data) - 1
-    data = player_ppg()
+    holder = subcount
+    data = player_ppg(holder, holder + 20)
     word = 'INSERT OR IGNORE INTO PlayerPPG (player_name, ppg) VALUES (?, ?)'
     for player in data:
         if count == 20:
@@ -165,10 +166,10 @@ def fill_ppg_database():
             cur.execute(word, (player[0], player[1]))
             count += 1
 
-    avg = cur.execute("SELECT AVG(ppg) FROM PlayerPPG")
-    avg1 = list(avg)[0][0]
-    params = ("Average PPG", avg1)
-    cur.execute("INSERT OR IGNORE INTO PlayerPPG VALUES (?, ?)", params)
+    #avg = cur.execute("SELECT AVG(ppg) FROM PlayerPPG")
+    #avg1 = list(avg)[0][0]
+    #params = ("Average PPG", avg1)
+    #cur.execute("INSERT OR IGNORE INTO PlayerPPG VALUES (?, ?)", params)
 
     conn.commit()
     conn.close()
@@ -194,10 +195,10 @@ def fill_google_mentions_database():
             cur.execute(word, (player[0], player[1]))
             count += 1
 
-    avg = cur.execute("SELECT AVG(mentions) FROM PlayerMentions")
-    avg1 = list(avg)[0][0]
-    params = ("Average Mentions", avg1)
-    cur.execute("INSERT OR IGNORE INTO PlayerMentions VALUES (?, ?)", params)
+    #avg = cur.execute("SELECT AVG(mentions) FROM PlayerMentions")
+    #avg1 = list(avg)[0][0]
+    #params = ("Average Mentions", avg1)
+    #cur.execute("INSERT OR IGNORE INTO PlayerMentions VALUES (?, ?)", params)
         
     conn.commit()
     conn.close()
@@ -248,5 +249,7 @@ def main():
     write_calculations()
 
 #reset_databases()
-#fill_salary_database()
-write_calculations()
+fill_ppg_database()
+fill_salary_database()
+fill_google_mentions_database()
+#write_calculations()
