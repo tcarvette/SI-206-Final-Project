@@ -132,12 +132,12 @@ def fill_salary_database():
         else:
             cur.execute(word, (player[0], player[1], player[2]))
             count += 1
-    avg = cur.execute("SELECT AVG(salary) FROM PlayerSalary")
-    avg1 = list(avg)[0][0]
-    avg2 = cur.execute("SELECT AVG(guaranteed_money) FROM PlayerSalary")
-    avg3 = list(avg2)[0][0]
-    params = ("Average Salary", avg1, avg3)
-    cur.execute("INSERT OR IGNORE INTO PlayerSalary VALUES (?, ?, ?)", params)
+    # avg = cur.execute("SELECT AVG(salary) FROM PlayerSalary")
+    # avg1 = list(avg)[0][0]
+    # avg2 = cur.execute("SELECT AVG(guaranteed_money) FROM PlayerSalary")
+    # avg3 = list(avg2)[0][0]
+    # params = ("Average Salary", avg1, avg3)
+    # cur.execute("INSERT OR IGNORE INTO PlayerSalary VALUES (?, ?, ?)", params)
     
     conn.commit()
     conn.close()
@@ -223,17 +223,21 @@ def write_calculations():
     dir_path = os.path.dirname(os.path.realpath(__file__))
     conn = sqlite3.connect(dir_path + "/main_database.db")
     cur = conn.cursor()
+    avg = cur.execute("SELECT AVG(salary) FROM PlayerSalary")
+    avgsal = list(avg)[0][0]
+    avg = cur.execute("SELECT AVG(mentions) FROM PlayerMentions")
+    avgmentions = list(avg)[0][0]
+    avg = cur.execute("SELECT AVG(ppg) FROM PlayerPPG")
+    avgppg = list(avg)[0][0]
 
-    write_mentions = list(cur.execute("SELECT * FROM PlayerMentions"))[-1]
-    write_ppg = list(cur.execute("SELECT * FROM PlayerPPG"))[-1]
-    write_salary = list(cur.execute("SELECT * FROM PlayerSalary"))[-1]
+
     dir_path = os.path.dirname(os.path.realpath(__file__))
     with open(dir_path + "/calc_file.csv", "w") as calc_file:
         calcwriter = csv.writer(calc_file)
         calcwriter.writerow(["Source", "Value"])
-        calcwriter.writerow(write_mentions)
-        calcwriter.writerow(write_ppg)
-        calcwriter.writerow(write_salary)
+        calcwriter.writerow(["Average Salary", avgsal])
+        calcwriter.writerow(["Average Mentions", avgmentions])
+        calcwriter.writerow(["Average PPG", avgppg])
     
 
 
@@ -243,7 +247,6 @@ def main():
     fill_ppg_database()
     write_calculations()
 
-reset_databases()
-fill_salary_database()
-fill_google_mentions_database()
-fill_ppg_database()
+#reset_databases()
+#fill_salary_database()
+write_calculations()
