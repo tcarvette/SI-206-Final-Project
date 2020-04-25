@@ -173,7 +173,8 @@ def calculations():
     words = "SELECT AVG(mentions) FROM PlayerMentions"
     avg = cur.execute("SELECT AVG(mentions) FROM PlayerMentions")
     avg1 = list(avg)[0][0]
-    cur.execute("INSERT INTO PlayerMentions (player_name, mentions) VALUES (Average, " + str(avg1) + ")")
+    params = ("Average", str(avg1))
+    cur.execute("INSERT INTO PlayerMentions (player_name, mentions) VALUES (?, ? )", params)
 calculations()
 
 
