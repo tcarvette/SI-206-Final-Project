@@ -172,7 +172,8 @@ def calculations():
     cur = conn.cursor()
     words = "SELECT AVG(mentions) FROM PlayerMentions"
     avg = cur.execute("SELECT AVG(mentions) FROM PlayerMentions")
-    cur.execute("INSERT INTO PlayerMentions (player_name, mentions) VALUES (Average, " + str(avg) + ")")
+    avg1 = list(avg)[0][0]
+    cur.execute("INSERT INTO PlayerMentions (player_name, mentions) VALUES (Average, " + str(avg1) + ")")
 calculations()
 
 
