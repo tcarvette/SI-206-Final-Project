@@ -167,7 +167,6 @@ def fill_google_mentions_database():
     conn.commit()
     conn.close()
 
-
 #print(player_name_and_contract())
 #print(player_trends(get_player_list))
 #print(player_ppg(0, 20))
