@@ -6,6 +6,7 @@ import requests
 import sqlite3
 from bs4 import BeautifulSoup
 import random
+import csv
 import pytrends
 import time
 from pytrends.request import TrendReq
@@ -126,7 +127,7 @@ def fill_salary_database():
     words = "SELECT AVG(salary) FROM PlayerSalary"
     avg = cur.execute("SELECT AVG(salary) FROM PlayerSalary")
     avg1 = list(avg)[0][0]
-    params = ("Average", avg1)
+    params = ("Average Salary", avg1)
     cur.execute("INSERT INTO PlayerSalary VALUES (?, ?)", params)
     
     conn.commit()
@@ -151,7 +152,7 @@ def fill_ppg_database():
     words = "SELECT AVG(ppg) FROM PlayerPPG"
     avg = cur.execute("SELECT AVG(ppg) FROM PlayerPPG")
     avg1 = list(avg)[0][0]
-    params = ("Average", avg1)
+    params = ("Average PPG", avg1)
     cur.execute("INSERT INTO PlayerPPG VALUES (?, ?)", params)
 
     conn.commit()
@@ -171,20 +172,33 @@ def fill_google_mentions_database():
     words = "SELECT AVG(mentions) FROM PlayerMentions"
     avg = cur.execute("SELECT AVG(mentions) FROM PlayerMentions")
     avg1 = list(avg)[0][0]
-    params = ("Average", avg1)
+    params = ("Average Mentions", avg1)
     cur.execute("INSERT INTO PlayerMentions VALUES (?, ?)", params)
         
     conn.commit()
     conn.close()
 
-#print(player_name_and_contract())
-#print(player_trends(get_player_list))
-#print(player_ppg(0, 20))
+def write_calculations():
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    conn = sqlite3.connect(dir_path + "/main_database.db")
+    cur = conn.cursor()
 
-fill_salary_database()
+    write_mentions = list(cur.execute("SELECT * FROM PlayerMentions"))[-1]
+    write_ppg = list(cur.execute("SELECT * FROM PlayerPPG"))[-1]
+    write_salary = list(cur.execute("SELECT * FROM PlayerSalary"))[-1]
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    with open(dir_path + "/calc_file.csv", "w") as calc_file:
+        calcwriter = csv.writer(calc_file)
+        calcwriter.writerow(["Source", "Value"])
+        calcwriter.writerow(write_mentions)
+        calcwriter.writerow(write_ppg)
+        calcwriter.writerow(write_salary)
+    
 
 
 def main():
     fill_salary_database()
     fill_google_mentions_database()
     fill_ppg_database()
+
+write_calculations()
