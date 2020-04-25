@@ -249,7 +249,7 @@ def main():
     write_calculations()
 
 #reset_databases()
-fill_ppg_database()
-fill_salary_database()
-fill_google_mentions_database()
-#write_calculations()
+# fill_ppg_database()
+# fill_salary_database()
+# fill_google_mentions_database()
+write_calculations()
