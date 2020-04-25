@@ -165,6 +165,19 @@ def fill_google_mentions_database():
 #print(player_name_and_contract())
 #print(player_trends(get_player_list))
 #print(player_ppg(0, 20))
-fill_salary_database()
-fill_ppg_database()
-fill_google_mentions_database()
+
+def calculations():
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    conn = sqlite3.connect(dir_path + "/main_database.db")
+    cur = conn.cursor()
+    words = "SELECT AVG(mentions) FROM PlayerMentions"
+    avg = cur.execute("SELECT AVG(mentions) FROM PlayerMentions")
+    cur.execute("INSERT INTO PlayerMentions (player_name, mentions) VALUES (Average, " + str(avg) + ")")
+calculations()
+
+
+
+def main():
+    fill_salary_database()
+    fill_google_mentions_database()
+    fill_ppg_database()
