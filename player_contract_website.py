@@ -157,6 +157,12 @@ def fill_google_mentions_database():
     
     word = 'INSERT INTO PlayerMentions (player_name, mentions) VALUES (?, ?)'
     cur.executemany(word, player_trends(get_player_list()))
+
+    words = "SELECT AVG(mentions) FROM PlayerMentions"
+    avg = cur.execute("SELECT AVG(mentions) FROM PlayerMentions")
+    avg1 = list(avg)[0][0]
+    params = ("Average", avg1)
+    cur.execute("INSERT INTO PlayerMentions VALUES (?, ?)", params)
         
     conn.commit()
     conn.close()
@@ -166,16 +172,6 @@ def fill_google_mentions_database():
 #print(player_trends(get_player_list))
 #print(player_ppg(0, 20))
 
-def calculations():
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    conn = sqlite3.connect(dir_path + "/main_database.db")
-    cur = conn.cursor()
-    words = "SELECT AVG(mentions) FROM PlayerMentions"
-    avg = cur.execute("SELECT AVG(mentions) FROM PlayerMentions")
-    avg1 = list(avg)[0][0]
-    params = ("Average", str(avg1))
-    cur.execute("INSERT INTO PlayerMentions (player_name, mentions) VALUES (?, ? )", params)
-calculations()
 
 
 
