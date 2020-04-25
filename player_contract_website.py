@@ -147,19 +147,28 @@ def fill_ppg_database():
     conn = sqlite3.connect(dir_path + "/main_database.db")
     cur = conn.cursor()
 
-    x = 0
-    y = 20
-    for i in range(5):
-        time.sleep(40)
-        word = 'INSERT OR IGNORE INTO PlayerPPG (player_name, ppg) VALUES (?, ?)'
-        cur.executemany(word, player_ppg(x, y))
-        x += 20
-        y += 20
-        conn.commit()
+    relevant_data = cur.execute('SELECT * FROM PlayerPPG')
+    player_lst = []
+    for item in relevant_data:
+        player_lst.append(item[0])
+
+    count = 0
+    divisor = len(relevant_data) - 1
+    data = player_ppg()
+    word = 'INSERT OR IGNORE INTO PlayerPPG (player_name, ppg) VALUES (?, ?)'
+    for player in data:
+        if count == 20:
+            break
+        if player[0] in player_lst:
+            continue
+        else:
+            cur.execute(word, (player[0], player[1]))
+            count += 1
+
     avg = cur.execute("SELECT AVG(ppg) FROM PlayerPPG")
     avg1 = list(avg)[0][0]
     params = ("Average PPG", avg1)
-    cur.execute("INSERT INTO PlayerPPG VALUES (?, ?)", params)
+    cur.execute("INSERT OR IGNORE INTO PlayerPPG VALUES (?, ?)", params)
 
     conn.commit()
     conn.close()
@@ -234,6 +243,7 @@ def main():
     fill_ppg_database()
     write_calculations()
 
-#reset_databases()
+reset_databases()
 fill_salary_database()
 fill_google_mentions_database()
+fill_ppg_database()
