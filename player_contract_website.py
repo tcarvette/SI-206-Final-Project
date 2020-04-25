@@ -36,7 +36,7 @@ def get_player_contract():
     contract_list = []
     main = soup.findAll('tr')
     for tr in main:
-        sum = 0
+        summ = 0
         count = 0
         salary = tr.findAll('td', class_ = "right")
         if len(salary) != 0:
@@ -45,11 +45,12 @@ def get_player_contract():
                     integer_num = item.text.replace("$", "").replace(",", "")
                 else:
                     integer_num = 0
-                sum += int(integer_num)
+                summ += int(integer_num)
                 if int(integer_num) > 0:
                     count += 1
-            avg_salary = sum/count
-            contract_list.append(avg_salary)
+            guaranteed_money = summ
+            avg_salary = summ/count
+            contract_list.append((avg_salary, guaranteed_money))
     
     return contract_list[:100]
 
@@ -59,7 +60,7 @@ def player_name_and_contract():
     contract_lst = get_player_contract()
     lst_of_tups = []
     while i < 100:
-        tup = (player_lst[i], contract_lst[i])
+        tup = (player_lst[i], contract_lst[i][0], contract_lst[i][1])
         lst_of_tups.append(tup)
         i += 1
     return lst_of_tups
@@ -118,17 +119,18 @@ def fill_salary_database():
 
 
     cur.execute('DROP TABLE IF EXISTS PlayerSalary')
-    cur.execute('CREATE TABLE IF NOT EXISTS PlayerSalary (player_name TEXT, salary INTEGER)')
+    cur.execute('CREATE TABLE IF NOT EXISTS PlayerSalary (player_name TEXT, salary INTEGER, guaranteed_money INTEGER)')
 
   
-    word = 'INSERT INTO PlayerSalary (player_name, salary) VALUES (?, ?)'
+    word = 'INSERT INTO PlayerSalary (player_name, salary, guaranteed_money) VALUES (?, ?, ?)'
     cur.executemany(word, player_name_and_contract())
     
-    words = "SELECT AVG(salary) FROM PlayerSalary"
     avg = cur.execute("SELECT AVG(salary) FROM PlayerSalary")
     avg1 = list(avg)[0][0]
-    params = ("Average Salary", avg1)
-    cur.execute("INSERT INTO PlayerSalary VALUES (?, ?)", params)
+    avg2 = cur.execute("SELECT AVG(guaranteed_money) FROM PlayerSalary")
+    avg3 = list(avg2)[0][0]
+    params = ("Average Salary", avg1, avg3)
+    cur.execute("INSERT INTO PlayerSalary VALUES (?, ?, ?)", params)
     
     conn.commit()
     conn.close()
@@ -149,7 +151,6 @@ def fill_ppg_database():
         x += 20
         y += 20
         conn.commit()
-    words = "SELECT AVG(ppg) FROM PlayerPPG"
     avg = cur.execute("SELECT AVG(ppg) FROM PlayerPPG")
     avg1 = list(avg)[0][0]
     params = ("Average PPG", avg1)
@@ -201,3 +202,5 @@ def main():
     fill_google_mentions_database()
     fill_ppg_database()
     write_calculations()
+
+fill_salary_database()
