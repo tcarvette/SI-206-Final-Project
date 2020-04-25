@@ -117,20 +117,22 @@ def fill_salary_database():
     conn = sqlite3.connect(dir_path + "/main_database.db")
     cur = conn.cursor()
 
-
-    cur.execute('DROP TABLE IF EXISTS PlayerSalary')
-    cur.execute('CREATE TABLE IF NOT EXISTS PlayerSalary (player_name TEXT, salary INTEGER, guaranteed_money INTEGER)')
-
-  
-    word = 'INSERT INTO PlayerSalary (player_name, salary, guaranteed_money) VALUES (?, ?, ?)'
-    cur.executemany(word, player_name_and_contract())
+    cur.execute('CREATE TABLE IF NOT EXISTS PlayerSalary (player_name TEXT PRIMARY KEY, salary INTEGER, guaranteed_money INTEGER)')
     
+    count = 0
+    data = player_name_and_contract()
+    word = 'INSERT OR IGNORE INTO PlayerSalary (player_name, salary, guaranteed_money) VALUES (?, ?, ?)'
+    for player in data:
+        if count == 20:
+            break
+        cur.execute(word, (player[0], player[1], player[2]))
+        count += 1
     avg = cur.execute("SELECT AVG(salary) FROM PlayerSalary")
     avg1 = list(avg)[0][0]
     avg2 = cur.execute("SELECT AVG(guaranteed_money) FROM PlayerSalary")
     avg3 = list(avg2)[0][0]
     params = ("Average Salary", avg1, avg3)
-    cur.execute("INSERT INTO PlayerSalary VALUES (?, ?, ?)", params)
+    cur.execute("INSERT OR IGNORE INTO PlayerSalary VALUES (?, ?, ?)", params)
     
     conn.commit()
     conn.close()
@@ -140,13 +142,12 @@ def fill_ppg_database():
     conn = sqlite3.connect(dir_path + "/main_database.db")
     cur = conn.cursor()
 
-    cur.execute('DROP TABLE IF EXISTS PlayerPPG')
     cur.execute('CREATE TABLE IF NOT EXISTS PlayerPPG (player_name TEXT, ppg INTEGER)')
     x = 0
     y = 20
     for i in range(5):
         time.sleep(40)
-        word = 'INSERT INTO PlayerPPG (player_name, ppg) VALUES (?, ?)'
+        word = 'INSERT OR IGNORE INTO PlayerPPG (player_name, ppg) VALUES (?, ?)'
         cur.executemany(word, player_ppg(x, y))
         x += 20
         y += 20
@@ -167,7 +168,7 @@ def fill_google_mentions_database():
     cur.execute('DROP TABLE IF EXISTS PlayerMentions')
     cur.execute('CREATE TABLE IF NOT EXISTS PlayerMentions (player_name TEXT, mentions INTEGER)')
     
-    word = 'INSERT INTO PlayerMentions (player_name, mentions) VALUES (?, ?)'
+    word = 'INSERT OR IGNORE INTO PlayerMentions (player_name, mentions) VALUES (?, ?)'
     cur.executemany(word, player_trends(get_player_list()))
 
     words = "SELECT AVG(mentions) FROM PlayerMentions"
