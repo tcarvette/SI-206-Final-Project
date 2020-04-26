@@ -9,6 +9,8 @@ import random
 import csv
 import pytrends
 from pytrends.request import TrendReq
+import  matplotlib
+import matplotlib.pyplot as plt
 
 def get_player_list():
     count = 0
@@ -239,6 +241,53 @@ def write_calculations():
         calcwriter.writerow(["Average Salary", avgsal])
         calcwriter.writerow(["Average Mentions", avgmentions])
         calcwriter.writerow(["Average PPG", avgppg])
+
+def visualize():
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    conn = sqlite3.connect(dir_path + "/main_database.db")
+    cur = conn.cursor()
+    #salary
+    salarylst0 = list(cur.execute("SELECT salary FROM PlayerSalary"))
+    salarylst = []
+    for i in salarylst0:
+        salarylst.append(i[0])
+    #ppg
+    ppglst0 = list(cur.execute("SELECT ppg FROM PlayerPPG"))
+    ppglst = []
+    for i in ppglst0:
+        ppglst.append(i[0])
+    #mentions
+    mentionslst0 = list(cur.execute("SELECT mentions FROM PlayerMentions"))
+    mentionslst = []
+    for i in mentionslst0:
+        mentionslst.append(i[0])
+    #PPGvsSALARY
+    plt.scatter(ppglst, salarylst, s=30, c="orange")
+    plt.title("Points per Game vs Salary among Top 100 Salaried NBA Players")
+    plt.xlabel("NBA Points per Game")
+    plt.ylabel("NBA Salary (in tens of millions of dollars)")
+    plt.show()
+    #PPGvsMENTIONS
+    plt.scatter(ppglst, mentionslst, s=30, c="orange")
+    plt.title("Points per Game vs Google Trends Mentions among Top 100 Salaried NBA Players")
+    plt.xlabel("NBA Points per Game")
+    plt.ylabel("Google Trends Mentions")
+    plt.show()
+    #PPG-HIST
+    plt.hist(ppglst, color="orange")
+    plt.title("Histogram of Average Points per Game among Top 100 Salaried NBA Players")
+    plt.xlabel("NBA Points per Game")
+    plt.ylabel("Frequency")
+    plt.show()
+    #SALARY-BXPLT
+    plt.boxplot(salarylst)
+    plt.title("Boxplot of Salaries of Top 100 Salaried NBA Players")
+    plt.ylabel("NBA Salary (in tens of millions of dollars)")
+    plt.grid()
+    plt.show()
+    #ADD 1 MORE TOMORROW
+    
+
     
 
 
@@ -252,4 +301,5 @@ def main():
 # fill_ppg_database()
 # fill_salary_database()
 # fill_google_mentions_database()
-write_calculations()
+#write_calculations()
+visualize()
