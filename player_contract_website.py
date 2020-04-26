@@ -283,10 +283,16 @@ def visualize():
     plt.boxplot(salarylst)
     plt.title("Boxplot of Salaries of Top 100 Salaried NBA Players")
     plt.ylabel("NBA Salary (in tens of millions of dollars)")
+    plt.xlabel("Top 100 Salaried Players in NBA")
     plt.grid()
     plt.show()
-    #ADD 1 MORE TOMORROW
-    
+    #MENTIONS-BXPLT
+    plt.boxplot(mentionslst)
+    plt.title("Boxplot of Google Trends Mentions of Top 100 Salaried NBA Players")
+    plt.ylabel("Google Trends Mentions")
+    plt.xlabel("Top 100 Salaried Players in NBA")
+    plt.grid()
+    plt.show()
 
     
 
