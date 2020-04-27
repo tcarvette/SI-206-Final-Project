@@ -133,12 +133,6 @@ def fill_salary_database():
         else:
             cur.execute(word, (player[0], player[1], player[2]))
             count += 1
-    # avg = cur.execute("SELECT AVG(salary) FROM PlayerSalary")
-    # avg1 = list(avg)[0][0]
-    # avg2 = cur.execute("SELECT AVG(guaranteed_money) FROM PlayerSalary")
-    # avg3 = list(avg2)[0][0]
-    # params = ("Average Salary", avg1, avg3)
-    # cur.execute("INSERT OR IGNORE INTO PlayerSalary VALUES (?, ?, ?)", params)
     
     conn.commit()
     conn.close()
@@ -168,11 +162,6 @@ def fill_ppg_database():
             cur.execute(word, (player[0], player[1]))
             count += 1
 
-    #avg = cur.execute("SELECT AVG(ppg) FROM PlayerPPG")
-    #avg1 = list(avg)[0][0]
-    #params = ("Average PPG", avg1)
-    #cur.execute("INSERT OR IGNORE INTO PlayerPPG VALUES (?, ?)", params)
-
     conn.commit()
     conn.close()
 
@@ -196,11 +185,6 @@ def fill_google_mentions_database():
         else:
             cur.execute(word, (player[0], player[1]))
             count += 1
-
-    #avg = cur.execute("SELECT AVG(mentions) FROM PlayerMentions")
-    #avg1 = list(avg)[0][0]
-    #params = ("Average Mentions", avg1)
-    #cur.execute("INSERT OR IGNORE INTO PlayerMentions VALUES (?, ?)", params)
         
     conn.commit()
     conn.close()
@@ -294,18 +278,10 @@ def visualize():
     plt.grid()
     plt.show()
 
-    
-
-
-def main():
-    fill_salary_database()
-    fill_google_mentions_database()
-    fill_ppg_database()
-    write_calculations()
 
 #reset_databases()
-# fill_ppg_database()
-# fill_salary_database()
-# fill_google_mentions_database()
+#fill_ppg_database()
+#fill_salary_database()
+#fill_google_mentions_database()
 #write_calculations()
-visualize()
+#visualize()
